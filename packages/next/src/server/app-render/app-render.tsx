@@ -388,6 +388,7 @@ async function renderToHTMLOrFlightImpl(
   renderOpts: RenderOpts,
   baseCtx: AppRenderBaseContext
 ) {
+  // APP Render 될 때 작동하는 함수
   const isFlight = req.headers[RSC.toLowerCase()] !== undefined
   const isNotFoundPath = pagePath === '/404'
 
@@ -453,6 +454,8 @@ async function renderToHTMLOrFlightImpl(
     capturedErrors,
     allCapturedErrors,
   })
+  // loayout 한번, page에서 한번
+  console.log('global Fetch in APP-render')
 
   patchFetch(ComponentMod)
 

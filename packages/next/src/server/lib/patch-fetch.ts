@@ -165,7 +165,7 @@ export function patchFetch({
     input: RequestInfo | URL,
     init: RequestInit | undefined
   ) => {
-    console.log('globalThis Fetch RUN')
+    console.log('globalThis Fetch RUN - ', input)
     let url: URL | undefined
     try {
       url = new URL(input instanceof Request ? input.url : input)
@@ -440,7 +440,10 @@ export function patchFetch({
             next: { ...init?.next, fetchType: 'origin', fetchIdx },
           }
 
+          console.log('fetch를 날리지 않도록 수정')
+          // 실 fetch를 날라는 부분
           return originFetch(input, clonedInit).then(async (res) => {
+            console.log('origin Fetch Start!')
             if (!isStale) {
               trackFetchMetric(staticGenerationStore, {
                 start: fetchStart,
@@ -461,6 +464,7 @@ export function patchFetch({
               const bodyBuffer = Buffer.from(await res.arrayBuffer())
 
               try {
+                console.log('API 통신 엔드')
                 await staticGenerationStore.incrementalCache.set(
                   cacheKey,
                   {
@@ -495,6 +499,7 @@ export function patchFetch({
             console.log('res - ', res)
             return res
           })
+          // return fetch('');
         }
 
         let handleUnlock = () => Promise.resolve()
@@ -508,6 +513,10 @@ export function patchFetch({
             cacheKey
           )
           console.log('done Cache Key API')
+          console.log(
+            'isOndemandRevalidate staticGenerationStore.isOnDemandRevalidate',
+            staticGenerationStore.isOnDemandRevalidate
+          )
           const entry = staticGenerationStore.isOnDemandRevalidate
             ? null
             : await staticGenerationStore.incrementalCache.get(cacheKey, {
@@ -520,6 +529,7 @@ export function patchFetch({
               })
 
           if (entry) {
+            // 여기서 handle Un lock 을 진행 해서 Cache 를 비워준다.
             await handleUnlock()
           } else {
             // in dev, incremental cache response will be null in case the browser adds `cache-control: no-cache` in the request headers

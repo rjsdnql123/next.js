@@ -1225,6 +1225,7 @@ export async function buildAppStaticPaths({
   >[0]['staticGenerationAsyncStorage']
   serverHooks: Parameters<typeof patchFetch>[0]['serverHooks']
 }) {
+  console.log('global Fetch in utils')
   patchFetch({
     staticGenerationAsyncStorage,
     serverHooks,

@@ -249,19 +249,24 @@ export class IncrementalCache {
     // 일정 시간이 지나면 cache를 지우는게 맞는 판단 ? NO 이건 처음
     // 새로고침 때만 작동 하므로
 
-    console.log('existingLock - ', existingLock)
-    console.log('await existingLock - ', await existingLock)
+    console.log('existingLock Test - ', existingLock)
+    console.log('await existingLock Test - ', await existingLock)
     if (existingLock) {
       await existingLock
+      console.log('in existingLock')
     } else {
+      console.log('create New API Lock')
       const newLock = new Promise<void>((resolve) => {
         unlockNext = async () => {
+          console.log('when unLock Next?')
           resolve()
         }
       })
 
       this.locks.set(cacheKey, newLock)
-      this.unlocks.set(cacheKey, unlockNext)
+      console.log('locks set bottom un lock set top', newLock)
+      console.log('Test Unlock Value', unlockNext)
+      // this.unlocks.set(cacheKey, unlockNext)
     }
 
     return unlockNext
