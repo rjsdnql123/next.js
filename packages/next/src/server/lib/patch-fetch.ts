@@ -165,6 +165,7 @@ export function patchFetch({
     input: RequestInfo | URL,
     init: RequestInit | undefined
   ) => {
+    console.log('globalThis Fetch RUN')
     let url: URL | undefined
     try {
       url = new URL(input instanceof Request ? input.url : input)
@@ -491,18 +492,22 @@ export function patchFetch({
               Object.defineProperty(response, 'url', { value: res.url })
               return response
             }
+            console.log('res - ', res)
             return res
           })
         }
 
         let handleUnlock = () => Promise.resolve()
         let cacheReasonOverride
+        console.log('cacheKey', cacheKey)
+
+        // cacheKey를 만들고, lock을 걸어준다
 
         if (cacheKey && staticGenerationStore.incrementalCache) {
           handleUnlock = await staticGenerationStore.incrementalCache.lock(
             cacheKey
           )
-
+          console.log('done Cache Key API')
           const entry = staticGenerationStore.isOnDemandRevalidate
             ? null
             : await staticGenerationStore.incrementalCache.get(cacheKey, {
@@ -617,7 +622,7 @@ export function patchFetch({
             if (hasNextConfig) delete init.next
           }
         }
-
+        console.log('patchFetch DONE')
         return doOriginalFetch(false, cacheReasonOverride).finally(handleUnlock)
       }
     )

@@ -212,6 +212,7 @@ export class IncrementalCache {
   }
 
   async lock(cacheKey: string) {
+    console.log('run API LOCk')
     if (
       process.env.__NEXT_INCREMENTAL_CACHE_IPC_PORT &&
       process.env.__NEXT_INCREMENTAL_CACHE_IPC_KEY &&
@@ -219,7 +220,7 @@ export class IncrementalCache {
     ) {
       const invokeIpcMethod = require('../server-ipc/request-utils')
         .invokeIpcMethod as typeof import('../server-ipc/request-utils').invokeIpcMethod
-
+      console.log('top invokeIpcMethod')
       await invokeIpcMethod({
         method: 'lock',
         ipcPort: process.env.__NEXT_INCREMENTAL_CACHE_IPC_PORT,
@@ -227,19 +228,29 @@ export class IncrementalCache {
         args: [cacheKey],
       })
 
+      console.log('top invokeIpcMethod end')
+
       return async () => {
+        console.log('async lock 콜백 함수로 unLock')
         await invokeIpcMethod({
           method: 'unlock',
           ipcPort: process.env.__NEXT_INCREMENTAL_CACHE_IPC_PORT,
           ipcKey: process.env.__NEXT_INCREMENTAL_CACHE_IPC_KEY,
           args: [cacheKey],
         })
+        console.log('async lock end')
       }
     }
 
     let unlockNext: () => Promise<void> = () => Promise.resolve()
+    console.log('Check Lock Cache ', cacheKey)
     const existingLock = this.locks.get(cacheKey)
+    // existingLock이 undefined를 반환 하고 있음
+    // 일정 시간이 지나면 cache를 지우는게 맞는 판단 ? NO 이건 처음
+    // 새로고침 때만 작동 하므로
 
+    console.log('existingLock - ', existingLock)
+    console.log('await existingLock - ', await existingLock)
     if (existingLock) {
       await existingLock
     } else {
