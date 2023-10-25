@@ -500,12 +500,15 @@ export function patchFetch({
 
         let handleUnlock = () => Promise.resolve()
         let cacheReasonOverride
-
+        console.log('checked cacheKey', cacheKey)
         if (cacheKey && staticGenerationStore.incrementalCache) {
           handleUnlock = await staticGenerationStore.incrementalCache.lock(
             cacheKey
           )
-
+          console.log(
+            'ㅁㄹㅇㄹㅇㅁㅇㄹㄹㅇㄴstaticGenerationStore.isOnDemandRevalidate',
+            staticGenerationStore.isOnDemandRevalidate
+          )
           const entry = staticGenerationStore.isOnDemandRevalidate
             ? null
             : await staticGenerationStore.incrementalCache.get(cacheKey, {
@@ -517,13 +520,16 @@ export function patchFetch({
                 softTags: implicitTags,
               })
 
+          console.log(entry, 'entrysadfkjakslfjalksf')
           if (entry) {
+            // console.log('entry unLock function run')
+            // 여기서 handle Un lock 을 진행 해서 Cache 를 비워준다.
             await handleUnlock()
           } else {
             // in dev, incremental cache response will be null in case the browser adds `cache-control: no-cache` in the request headers
             cacheReasonOverride = 'cache-control: no-cache (hard refresh)'
           }
-
+          console.log(entry, 'skfljalkdfjklajfklajfklajslk')
           if (entry?.value && entry.value.kind === 'FETCH') {
             // when stale and is revalidating we wait for fresh data
             // so the revalidated entry has the updated data

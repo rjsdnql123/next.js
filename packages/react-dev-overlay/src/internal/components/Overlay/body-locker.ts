@@ -8,7 +8,7 @@ export function lock() {
     if (activeLocks++ > 0) {
       return
     }
-
+    console.log(';bodylock')
     const scrollBarGap =
       window.innerWidth - document.documentElement.clientWidth
 
