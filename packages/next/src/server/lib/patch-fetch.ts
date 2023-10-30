@@ -154,7 +154,7 @@ export function patchFetch({
   if (!(globalThis as any)._nextOriginalFetch) {
     ;(globalThis as any)._nextOriginalFetch = globalThis.fetch
   }
-
+  console.log('runrunrun')
   if ((globalThis.fetch as any).__nextPatched) return
 
   const { DynamicServerError } = serverHooks
@@ -453,7 +453,16 @@ export function patchFetch({
             next: { ...init?.next, fetchType: 'origin', fetchIdx },
           }
 
+          // if (!isStale) {
+          //   return
+          // }
+          console.log('asjfdlkjasdfk - ', input)
+          console.log('asjfdlkjasdfzvxzcvxzvcxk - ', clonedInit)
+          // originFetch('http://127.0.0.1:8080/data.json?id=6123123')
+          //   .then((res) => console.log('sadkfljaskdlf ', res))
+          //   .catch((err) => console.log('sfkjkslafjklsaf', err))
           return originFetch(input, clonedInit).then(async (res) => {
+            console.log('asdfjasklfjaslf - ', res)
             if (!isStale) {
               trackFetchMetric(staticGenerationStore, {
                 start: fetchStart,

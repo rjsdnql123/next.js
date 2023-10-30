@@ -235,23 +235,30 @@ export class IncrementalCache {
       }
     }
 
-    let unlockNext: () => Promise<void> = () => Promise.resolve()
-    const existingLock = this.locks.get(cacheKey)
+    const doLock = async () => {
+      let unlockNext: () => Promise<void> = () => Promise.resolve()
+      const existingLock = this.locks.get(cacheKey)
 
-    if (existingLock) {
-      await existingLock
-    } else {
-      const newLock = new Promise<void>((resolve) => {
-        unlockNext = async () => {
-          resolve()
-        }
-      })
+      console.log('existingLock Test - ', existingLock)
+      // console.log('await existingLock Test - ', await existingLock)
+      if (existingLock) {
+        await existingLock
+      } else {
+        const newLock = new Promise<void>((resolve) => {
+          unlockNext = async () => {
+            resolve()
+          }
+        })
 
-      this.locks.set(cacheKey, newLock)
-      this.unlocks.set(cacheKey, unlockNext)
+        this.locks.set(cacheKey, newLock)
+        this.unlocks.set(cacheKey, unlockNext)
+        // console.log('locks set bottom un lock set top', newLock)
+        console.log('Test Unlock Value', unlockNext)
+      }
+      return unlockNext
     }
 
-    return unlockNext
+    return await doLock()
   }
 
   async revalidateTag(tag: string) {

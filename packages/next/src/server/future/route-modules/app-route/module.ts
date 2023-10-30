@@ -353,6 +353,7 @@ export class AppRouteRouteModule extends RouteModule<
                     },
                   },
                   async () => {
+                    console.log('globalFetch')
                     // Patch the global fetch.
                     patchFetch({
                       serverHooks: this.serverHooks,

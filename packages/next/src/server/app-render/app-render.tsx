@@ -486,7 +486,7 @@ async function renderToHTMLOrFlightImpl(
     capturedErrors,
     allCapturedErrors,
   })
-
+  console.log(ComponentMod, 'ComponentModComponentModComponentModComponentMod')
   patchFetch(ComponentMod)
 
   /**
